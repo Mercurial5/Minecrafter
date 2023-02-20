@@ -1,0 +1,2 @@
+class FailedCast(Exception):
+    pass
