@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 
-from serializers.fields.exceptions import FailedCast
+from utils.serializers.fields.exceptions import FailedCast
 
 
 class BaseField(ABC):

@@ -3,7 +3,7 @@ from typing import Callable, Type
 
 from flask import Request
 
-from serializers import BaseSerializer
+from utils.serializers import BaseSerializer
 
 
 def jsonable(request: Request) -> Callable:

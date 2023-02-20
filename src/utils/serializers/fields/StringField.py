@@ -1,7 +1,7 @@
 from typing import Any
 
-from serializers.fields import BaseField
-from serializers.fields.exceptions import FailedCast
+from utils.serializers.fields import BaseField
+from utils.serializers.fields.exceptions import FailedCast
 
 
 class StringField(BaseField):

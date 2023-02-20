@@ -1,7 +1,7 @@
 from inspect import getmembers
 
-from serializers.exceptions import NotValidated
-from serializers.fields import BaseField
+from utils.serializers.exceptions import NotValidated
+from utils.serializers.fields import BaseField
 
 
 class BaseSerializer:

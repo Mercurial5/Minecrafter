@@ -1,5 +1,5 @@
-from serializers import BaseSerializer
-from serializers import fields
+from utils.serializers import BaseSerializer
+from utils.serializers import fields
 
 
 class UserCreateSerializer(BaseSerializer):

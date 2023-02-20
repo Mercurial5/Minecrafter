@@ -1,1 +1,0 @@
-from serializers.BaseSerializer import BaseSerializer

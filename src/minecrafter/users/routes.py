@@ -1,6 +1,6 @@
 from flask import request
 
-from decorators import serializable
+from utils.decorators import serializable
 from minecrafter.users import app
 from minecrafter.users.serializers import UserCreateSerializer
 
