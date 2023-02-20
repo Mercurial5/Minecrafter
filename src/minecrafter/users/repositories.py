@@ -23,7 +23,8 @@ class UserRepositories:
 
     @staticmethod
     def get_user(**kwargs) -> User:
-        return User.objects(**kwargs)
+        users = User.objects(**kwargs)
+        return None if len(users) == 0 else users[0]
 
     @staticmethod
     def create(data: dict) -> User:
