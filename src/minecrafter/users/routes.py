@@ -1,6 +1,5 @@
 import re
 from http import HTTPStatus
-from typing import Union
 
 from flask import request
 from mongoengine.errors import NotUniqueError
@@ -14,7 +13,7 @@ from utils.decorators import serializable
 
 @app.route('/', endpoint='list_users', methods=['GET'])
 @serializable(request, output_serializer_class=UserOutputSerializer)
-def list_users():
+def list_users() -> tuple[list[User], int]:
     service = UserService()
     users = service.get_users()
 
@@ -23,7 +22,7 @@ def list_users():
 
 @app.route('/', endpoint='create_user', methods=['POST'])
 @serializable(request, input_serializer_class=UserCreateSerializer, output_serializer_class=UserOutputSerializer)
-def create_user(data: dict) -> tuple[Union[dict, User], int]:
+def create_user(data: dict) -> tuple[dict | User, int]:
     service = UserService()
 
     try:
@@ -37,7 +36,7 @@ def create_user(data: dict) -> tuple[Union[dict, User], int]:
 
 @app.route('/<user_id>', endpoint='retrieve_user', methods=['GET'])
 @serializable(request, output_serializer_class=UserOutputSerializer)
-def retrieve_user(user_id: str):
+def retrieve_user(user_id: str) -> tuple[dict | User, int]:
     service = UserService()
     user = service.get_user(id=user_id)
 
