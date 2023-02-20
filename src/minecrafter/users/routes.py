@@ -33,3 +33,15 @@ def create_user(data: dict) -> tuple[Union[dict, User], int]:
         return {duplicate_field: f'User with this {duplicate_field} already exists'}, HTTPStatus.BAD_REQUEST
 
     return user, HTTPStatus.CREATED
+
+
+@app.route('/<user_id>', endpoint='retrieve_user', methods=['GET'])
+@serializable(request, output_serializer_class=UserOutputSerializer)
+def retrieve_user(user_id: str):
+    service = UserService()
+    user = service.get_user(id=user_id)
+
+    if user is None:
+        return dict(), HTTPStatus.NOT_FOUND
+
+    return user, HTTPStatus.OK
