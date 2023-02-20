@@ -4,7 +4,7 @@ from utils.serializers.exceptions import NotValidated
 from utils.serializers.fields import BaseField
 
 
-class BaseSerializer:
+class InputSerializer:
 
     def __init__(self, data: dict):
         self.fields = {field[0]: field[1] for field in getmembers(self) if isinstance(field[1], BaseField)}
@@ -16,18 +16,15 @@ class BaseSerializer:
     def validate(self) -> dict:
         validated_data = dict()
 
-        field_serializer: BaseField
-        for field_name, field_serializer in self.fields.items():
-            if field_serializer.read_only:
-                continue
-
+        field_class: BaseField
+        for field_name, field_class in self.fields.items():
             if field_name not in self.data:
                 return dict(status=False, description=f'`{field_name}` is not given')
 
-            casted = field_serializer.cast(self.data[field_name])
+            casted = field_class.cast(self.data[field_name])
             if not casted:
                 return dict(status=False,
-                            description=f'`{field_name}` could not be casted to {field_serializer.__class__.__name__}')
+                            description=f'`{field_name}` could not be casted to {field_class.__class__.__name__}')
 
             validated_data[field_name] = casted
 

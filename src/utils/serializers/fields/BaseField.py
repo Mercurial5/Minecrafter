@@ -6,15 +6,19 @@ from utils.serializers.fields.exceptions import FailedCast
 
 class BaseField(ABC):
 
-    def __init__(self, read_only: bool = False):
-        self.read_only = read_only
-
-    def cast(self, value: Any) -> Any | None:
+    def cast(self, value: Any, output: bool = False) -> Any | None:
         try:
+            if output:
+                return self.perform_output_cast(value)
+
             return self.perform_cast(value)
         except FailedCast:
             return None
 
     @abstractmethod
     def perform_cast(self, value: str) -> Any:
+        pass
+
+    @abstractmethod
+    def perform_output_cast(self, value: Any) -> str:
         pass

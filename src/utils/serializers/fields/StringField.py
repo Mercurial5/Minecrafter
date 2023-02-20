@@ -11,3 +11,6 @@ class StringField(BaseField):
             return str(value)
         except ValueError:
             raise FailedCast()
+
+    def perform_output_cast(self, value: str) -> str:
+        return str(value)

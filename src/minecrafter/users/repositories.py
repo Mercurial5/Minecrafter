@@ -27,4 +27,4 @@ class UserRepositories:
 
     @staticmethod
     def create(data: dict) -> User:
-        return User(**data)
+        return User(**data).save()

@@ -3,7 +3,7 @@ from typing import Callable, Type
 
 from flask import Request
 
-from utils.serializers import BaseSerializer
+from utils.serializers import InputSerializer, OutputSerializer
 
 
 def jsonable(request: Request) -> Callable:
@@ -19,7 +19,8 @@ def jsonable(request: Request) -> Callable:
     return jsonable_inner
 
 
-def serializable(request: Request, input_serializer_class: Type[BaseSerializer]) -> Callable:
+def serializable(request: Request, input_serializer_class: Type[InputSerializer],
+                 output_serializer_class: Type[OutputSerializer]) -> Callable:
     def serializable_inner(func: Callable) -> Callable:
         @jsonable(request)
         def wrapper(*args, **kwargs):
@@ -30,9 +31,15 @@ def serializable(request: Request, input_serializer_class: Type[BaseSerializer])
             if not status:
                 return validation, HTTPStatus.BAD_REQUEST
 
-            result = func(serializer.validated_data, *args, **kwargs)
+            result, status = func(serializer.validated_data, *args, **kwargs)
 
-            return result, HTTPStatus.OK
+            if isinstance(result, dict):
+                return result, status
+
+            serializer = output_serializer_class(validated_data=result)
+            output_data = serializer.prepare_output()
+
+            return output_data, status
 
         return wrapper
 
