@@ -14,7 +14,7 @@ from utils.decorators import serializable
 
 @app.route('/', methods=['POST'])
 @serializable(request, UserCreateSerializer, UserOutputSerializer)
-def create(data: dict) -> tuple[Union[dict, User], int]:
+def create_user(data: dict) -> tuple[Union[dict, User], int]:
     service = UserService()
 
     try:
