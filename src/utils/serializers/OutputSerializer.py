@@ -15,5 +15,5 @@ class OutputSerializer:
         field_class: BaseField
         for field_name, field_class in self.fields.items():
             output_data[field_name] = field_class.cast(self.validated_data[field_name], output=True)
-        print(output_data)
+
         return output_data
