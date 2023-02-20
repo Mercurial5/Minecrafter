@@ -19,27 +19,28 @@ def jsonable(request: Request) -> Callable:
     return jsonable_inner
 
 
-def serializable(request: Request, input_serializer_class: Type[InputSerializer],
-                 output_serializer_class: Type[OutputSerializer]) -> Callable:
+def serializable(request: Request, input_serializer_class: Type[InputSerializer] = None,
+                 output_serializer_class: Type[OutputSerializer] = None) -> Callable:
     def serializable_inner(func: Callable) -> Callable:
         @jsonable(request)
         def wrapper(*args, **kwargs):
-            serializer = input_serializer_class(data=request.json)
-            validation = serializer.validate()
-            status = validation.pop('status')
+            validated_data = request.json
+            if input_serializer_class is not None:
+                serializer = input_serializer_class(data=request.json)
+                validation = serializer.validate()
+                status = validation.pop('status')
 
-            if not status:
-                return validation, HTTPStatus.BAD_REQUEST
+                if not status:
+                    return validation, HTTPStatus.BAD_REQUEST
+                validated_data = serializer.validated_data
 
-            result, status = func(serializer.validated_data, *args, **kwargs)
+            result, status = func(validated_data, *args, **kwargs)
 
-            if isinstance(result, dict):
-                return result, status
+            if output_serializer_class is not None and not isinstance(result, dict):
+                serializer = output_serializer_class(validated_data=result)
+                result = serializer.prepare_output()
 
-            serializer = output_serializer_class(validated_data=result)
-            output_data = serializer.prepare_output()
-
-            return output_data, status
+            return result, status
 
         return wrapper
 
