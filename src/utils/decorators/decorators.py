@@ -24,7 +24,6 @@ def serializable(request: Request, input_serializer_class: Type[InputSerializer]
     def serializable_inner(func: Callable) -> Callable:
         @jsonable(request)
         def wrapper(*args, **kwargs):
-            validated_data = request.json
             if input_serializer_class is not None:
                 serializer = input_serializer_class(data=request.json)
                 validation = serializer.validate()
@@ -33,8 +32,9 @@ def serializable(request: Request, input_serializer_class: Type[InputSerializer]
                 if not status:
                     return validation, HTTPStatus.BAD_REQUEST
                 validated_data = serializer.validated_data
-
-            result, status = func(validated_data, *args, **kwargs)
+                result, status = func(validated_data, *args, **kwargs)
+            else:
+                result, status = func(*args, **kwargs)
 
             if output_serializer_class is not None and not isinstance(result, dict):
                 serializer = output_serializer_class(validated_data=result)
