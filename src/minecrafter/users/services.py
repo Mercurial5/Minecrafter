@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from minecrafter.users.models import User
+from minecrafter.users.models import User, UserAuthorizationKey
 from minecrafter.users.repositories import UserRepositories
 from minecrafter.users.repositories import UserRepositoriesProtocol
 
@@ -14,6 +14,8 @@ class UserServicesProtocol(Protocol):
 
     def create(self, data: dict) -> User: ...
 
+    def generate_key(self, user: User) -> UserAuthorizationKey: ...
+
 
 class UserService:
     repo: UserRepositoriesProtocol = UserRepositories()
@@ -26,3 +28,6 @@ class UserService:
 
     def create(self, data: dict) -> User:
         return self.repo.create(data)
+
+    def generate_key(self, user: User) -> UserAuthorizationKey:
+        return self.repo.generate_key(user)

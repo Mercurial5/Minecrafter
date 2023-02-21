@@ -9,6 +9,12 @@ class UserOutputSerializer(OutputSerializer):
     created = fields.DateTimeField(date_format='%Y-%m-%d %H:%M:%S')
 
 
+class UserAuthorizationKeyOutputSerializer(OutputSerializer):
+    id = fields.StringField()
+    key = fields.StringField()
+    created = fields.DateTimeField(date_format='%Y-%m-%d %H:%M:%S')
+
+
 class UserCreateSerializer(InputSerializer):
     telegram_id = fields.IntegerField()
     username = fields.StringField()

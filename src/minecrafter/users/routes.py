@@ -5,7 +5,8 @@ from flask import request
 from mongoengine.errors import NotUniqueError
 
 from minecrafter.users import app
-from minecrafter.users.models import User
+from minecrafter.users.models import User, UserAuthorizationKey
+from minecrafter.users.serializers import UserAuthorizationKeyOutputSerializer
 from minecrafter.users.serializers import UserCreateSerializer, UserOutputSerializer
 from minecrafter.users.services import UserService
 from utils.decorators import serializable
@@ -34,13 +35,23 @@ def create_user(data: dict) -> tuple[dict | User, int]:
     return user, HTTPStatus.CREATED
 
 
-@app.route('/<user_id>', endpoint='retrieve_user', methods=['GET'])
+@app.route('/<telegram_id>', endpoint='retrieve_user', methods=['GET'])
 @serializable(request, output_serializer_class=UserOutputSerializer)
-def retrieve_user(user_id: str) -> tuple[dict | User, int]:
+def retrieve_user(telegram_id: int) -> tuple[dict | User, int]:
     service = UserService()
-    user = service.get_user(id=user_id)
+    user = service.get_user(telegram_id=telegram_id)
 
     if user is None:
         return dict(), HTTPStatus.NOT_FOUND
 
     return user, HTTPStatus.OK
+
+
+@app.route('/<telegram_id>/generate-key')
+@serializable(request, output_serializer_class=UserAuthorizationKeyOutputSerializer)
+def generate_key(telegram_id: str) -> tuple[UserAuthorizationKey, int]:
+    service = UserService()
+    user = service.get_user(telegram_id=telegram_id)
+    
+    key = service.generate_key(user)
+    return key, HTTPStatus.OK
