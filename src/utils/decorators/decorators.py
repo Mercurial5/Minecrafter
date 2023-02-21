@@ -22,7 +22,6 @@ def jsonable(request: Request) -> Callable:
 def serializable(request: Request, input_serializer_class: Type[InputSerializer] = None,
                  output_serializer_class: Type[OutputSerializer] = None) -> Callable:
     def serializable_inner(func: Callable) -> Callable:
-        @jsonable(request)
         def wrapper(*args, **kwargs):
             if input_serializer_class is not None:
                 serializer = input_serializer_class(data=request.json)
@@ -42,6 +41,9 @@ def serializable(request: Request, input_serializer_class: Type[InputSerializer]
 
             return result, status
 
-        return wrapper
+        if input_serializer_class:
+            return jsonable(request)(wrapper)
+        else:
+            return wrapper
 
     return serializable_inner
